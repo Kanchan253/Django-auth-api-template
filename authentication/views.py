@@ -27,3 +27,13 @@ class UserExistView(generics.GenericAPIView):
             return JsonData(result={"exist": False}, status_code=status.HTTP_200_OK, status=True, message=CustomEnumEvents.USER_LOGIN.name)
         else:
             return JsonData(result={"exist": True}, status_code=status.HTTP_200_OK, status=True, message=CustomEnumEvents.USER_LOGIN.name)
+    
+class VerifyEmailView(generics.GenericAPIView):
+    serializer_class = VerifyEmailSerializer
+
+    def get(self, request, user_id, token):
+        serializer = self.serializer_class(data={'user_id': user_id, 'token': token})
+        if serializer.is_valid(raise_exception=True) :
+            return JsonData(message=CustomEnumEvents.USER_EMAIL_VERIFICATION_SUCCESS.name,result={'email': 'Successfully verified'}, status_code=status.HTTP_200_OK,status=True)
+        else :
+            return JsonData(message=CustomEnumEvents.USER_EMAIL_VERIFICATION_FAILED.name,result={'token': 'Invalid token'}, status_code=status.HTTP_400_BAD_REQUEST,status=False)
